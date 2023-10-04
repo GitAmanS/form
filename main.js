@@ -9,19 +9,6 @@ form.addEventListener("submit", function (event) {
     const email = document.getElementById("email").value;
 
     const uniqueId = name+phone+email;
-
-   
-    const userDiv = document.createElement("div");
-    
-
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
-    deleteButton.addEventListener("click", function () {
-        userDiv.remove();
-        localStorage.removeItem(uniqueId);
-    });
-
-
     const userData = {
         name: name,
         phone: phone,
@@ -30,11 +17,35 @@ form.addEventListener("submit", function (event) {
 
     localStorage.setItem(uniqueId,JSON.stringify(userData));
 
+   
+    const userDiv = document.createElement("div");
+    
+
+    const deleteButton = document.createElement("button");
+    const editButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    editButton.textContent = "Edit";
+    deleteButton.addEventListener("click", function () {
+        userDiv.remove();
+        localStorage.removeItem(uniqueId);
+    });
+    editButton.addEventListener("click", function(){
+        const storedData = JSON.parse(localStorage.getItem(uniqueId));
+        document.getElementById("name").value = storedData.name;
+        document.getElementById("phone").value = storedData.phone;
+        document.getElementById("email").value = storedData.email;
+        userDiv.remove();
+        localStorage.removeItem(uniqueId);
+    });
+
     var jsonre = JSON.parse(localStorage.getItem(uniqueId));
-    userDiv.innerHTML = `
-        <p>Name: ${jsonre.name}  Phone: ${jsonre.phone}  Email: ${jsonre.email} </p>
-    `;
+
+    const userDet = document.createElement("p");
+    userDet.textContent = `Name: ${jsonre.name}  Phone: ${jsonre.phone}  Email: ${jsonre.email}`;
+    userDiv.appendChild(userDet);
+
     userDiv.appendChild(deleteButton);
+    userDiv.appendChild(editButton);
 
     displayInfo.appendChild(userDiv);
 
