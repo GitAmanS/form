@@ -14,10 +14,18 @@ form.addEventListener("submit", function (event) {
         phone: phone,
         email: email,
     };
-
+    axios.post("https://crudcrud.com/api/e89765ca0ad242f0b054827e0b758205/appointments", userData)
+    .then(data=>{
+        showUser(data.data);
+    }).catch(err =>{
+        console.error(err)
+    }) ;
     localStorage.setItem(uniqueId,JSON.stringify(userData));
+});
 
-   
+
+function showUser(obj){
+    const uniqueId = obj._id;
     const userDiv = document.createElement("div");
     
 
@@ -27,21 +35,35 @@ form.addEventListener("submit", function (event) {
     editButton.textContent = "Edit";
     deleteButton.addEventListener("click", function () {
         userDiv.remove();
-        localStorage.removeItem(uniqueId);
+        
     });
     editButton.addEventListener("click", function(){
         const storedData = JSON.parse(localStorage.getItem(uniqueId));
-        document.getElementById("name").value = storedData.name;
-        document.getElementById("phone").value = storedData.phone;
-        document.getElementById("email").value = storedData.email;
+        document.getElementById("name").value = obj.name;
+        document.getElementById("phone").value = obj.phone;
+        document.getElementById("email").value = obj.email;
         userDiv.remove();
-        localStorage.removeItem(uniqueId);
+        axios.delete(`https://crudcrud.com/api/e89765ca0ad242f0b054827e0b758205/appointments/${uniqueId}`)
+        .then(response =>{
+            console.log(response);
+        }).catch(err =>{
+            console.error(err);
+        })
+        
+    });
+    let jsonre;
+    axios.get(`https://crudcrud.com/api/e89765ca0ad242f0b054827e0b758205/appointments/${uniqueId}`)
+    .then(response =>{
+        jsonre = response.data;
+        showData();
+    }).catch(err =>{
+        console.error(err)
     });
 
-    var jsonre = JSON.parse(localStorage.getItem(uniqueId));
+    
 
-    const userDet = document.createElement("p");
-    userDet.textContent = `Name: ${jsonre.name}  Phone: ${jsonre.phone}  Email: ${jsonre.email}`;
+    function showData(){const userDet = document.createElement("p");
+    userDet.textContent = `Name: ${obj.name}  Phone: ${jsonre.phone}  Email: ${jsonre.email}`;
     userDiv.appendChild(userDet);
 
     userDiv.appendChild(deleteButton);
@@ -49,11 +71,8 @@ form.addEventListener("submit", function (event) {
 
     displayInfo.appendChild(userDiv);
 
-    form.reset();
-});
-
-
-
+    form.reset();}
+}
 
 
 
